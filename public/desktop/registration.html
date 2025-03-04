@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XtremeSoft V4.0 - Registrasi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/registration.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <img src="logo.png" alt="XtremeSoft Logo">
+                <div class="logo-text">XtremeSoft V4.0</div>
+            </div>
+        </div>
+        
+        <div class="progress-bar">
+            <div class="progress" id="progress"></div>
+            <div class="progress-step active" id="step-1">1</div>
+            <div class="progress-step" id="step-2">2</div>
+            <div class="progress-step" id="step-3">3</div>
+            <div class="progress-step" id="step-4">4</div>
+        </div>
+        
+        <!-- Step 1: Email Registration -->
+        <div class="form-step active" id="form-step-1">
+            <h1>Daftar Akun Baru</h1>
+            <div class="notification info">
+                Silakan masukkan alamat email Anda untuk memulai pendaftaran.
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Alamat Email</label>
+                <input type="email" id="email" placeholder="Contoh: nama@email.com" required>
+            </div>
+            
+            <div class="buttons">
+                <div></div> <!-- Empty div for flex spacing -->
+                <button type="button" class="btn" id="btn-to-step-2">Lanjutkan</button>
+            </div>
+        </div>
+        
+        <!-- Step 2: OTP Verification -->
+        <div class="form-step" id="form-step-2">
+            <h1>Verifikasi Email</h1>
+            <div class="notification info">
+                Kami telah mengirimkan kode OTP ke alamat email Anda. Masukkan kode tersebut di bawah ini.
+            </div>
+            
+            <div class="form-group">
+                <label for="otp">Kode OTP (6 digit)</label>
+                <div class="otp-inputs">
+                    <input type="text" maxlength="1" class="otp-input" data-index="1">
+                    <input type="text" maxlength="1" class="otp-input" data-index="2">
+                    <input type="text" maxlength="1" class="otp-input" data-index="3">
+                    <input type="text" maxlength="1" class="otp-input" data-index="4">
+                    <input type="text" maxlength="1" class="otp-input" data-index="5">
+                    <input type="text" maxlength="1" class="otp-input" data-index="6">
+                </div>
+            </div>
+            
+            <div class="text-center">
+                <a href="#" id="resend-otp">Kirim ulang kode OTP</a>
+            </div>
+            
+            <div class="buttons">
+                <button type="button" class="btn btn-outline" id="btn-back-to-step-1">Kembali</button>
+                <button type="button" class="btn" id="btn-to-step-3">Verifikasi</button>
+            </div>
+        </div>
+        
+        <!-- Step 3: Create Account -->
+        <div class="form-step" id="form-step-3">
+            <h1>Buat Akun</h1>
+            <div class="notification info">
+                Email Anda telah diverifikasi. Silakan lengkapi data diri Anda.
+            </div>
+            
+            <div class="form-group">
+                <label for="fullname">Nama Lengkap</label>
+                <input type="text" id="fullname" placeholder="Masukkan nama lengkap Anda" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Nomor Telepon</label>
+                <input type="tel" id="phone" placeholder="Contoh: 081234567890" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Kata Sandi</label>
+                <input type="password" id="password" placeholder="Minimal 8 karakter" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirm-password">Konfirmasi Kata Sandi</label>
+                <input type="password" id="confirm-password" placeholder="Masukkan ulang kata sandi" required>
+            </div>
+            
+            <div class="buttons">
+                <button type="button" class="btn btn-outline" id="btn-back-to-step-2">Kembali</button>
+                <button type="button" class="btn" id="btn-to-step-4">Lanjutkan</button>
+            </div>
+        </div>
+        
+        <!-- Step 4: Choose Subscription -->
+        <div class="form-step" id="form-step-4">
+            <h1>Pilih Paket Langganan</h1>
+            <div class="notification info">
+                Pilih paket langganan yang sesuai dengan kebutuhan Anda.
+            </div>
+            
+            <div class="package-cards">
+                <div class="package-card" data-package="1">
+                    <div class="package-name">1 Bulan</div>
+                    <div class="package-price">Rp 99.000</div>
+                    <div class="package-duration">30 hari</div>
+                </div>
+                <div class="package-card" data-package="3">
+                    <div class="package-name">3 Bulan</div>
+                    <div class="package-price">Rp 269.000</div>
+                    <div class="package-duration">90 hari</div>
+                </div>
+                <div class="package-card" data-package="6">
+                    <div class="package-name">6 Bulan</div>
+                    <div class="package-price">Rp 499.000</div>
+                    <div class="package-duration">180 hari</div>
+                </div>
+                <div class="package-card" data-package="12">
+                    <div class="package-name">12 Bulan</div>
+                    <div class="package-price">Rp 899.000</div>
+                    <div class="package-duration">365 hari</div>
+                </div>
+            </div>
+            
+            <h2 style="margin-top: 30px;">Metode Pembayaran</h2>
+            
+            <div class="payment-methods">
+                <div class="payment-method" data-method="midtrans">
+                    <img src="../assets/mitrans.png" alt="Midtrans">
+                    <div>
+                        <div class="payment-method-name">Pembayaran Online (Midtrans)</div>
+                        <div class="payment-method-desc">Transfer Bank, E-Wallet, Virtual Account</div>
+                    </div>
+                </div>
+                <div class="payment-method" data-method="manual">
+                    <img src="../assets/cash.png" alt="Manual Transfer">
+                    <div>
+                        <div class="payment-method-name">Transfer Manual</div>
+                        <div class="payment-method-desc">Transfer dan unggah bukti pembayaran</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="buttons">
+                <button type="button" class="btn btn-outline" id="btn-back-to-step-3">Kembali</button>
+                <button type="button" class="btn" id="btn-finish">Lanjut ke Pembayaran</button>
+            </div>
+        </div>
+        
+        <!-- Success Message (Hidden initially) -->
+        <div class="form-step" id="success-step">
+            <i class="fas fa-check-circle success-icon"></i>
+            <h1>Pendaftaran Berhasil!</h1>
+            <p class="text-center">Akun Anda telah berhasil didaftarkan. Silakan selesaikan pembayaran untuk mengaktifkan langganan Anda.</p>
+            
+            <div id="payment-info" class="notification info hide">
+                <!-- Payment instructions will be inserted here -->
+            </div>
+            
+            <div class="buttons">
+                <button type="button" class="btn" id="btn-to-payment">Lanjut ke Pembayaran</button>
+            </div>
+        </div>
+        
+        <div class="form-footer">
+            &copy; 2025 XtremeSoft V4.0 - All Rights Reserved
+        </div>
+    </div>
+    
+    <!-- Load services first -->
+    <script src="js/services/ApiService.js"></script>
+    <script src="js/services/FormValidator.js"></script>
+    <script src="js/services/UIManager.js"></script>
+    
+    <!-- Load controllers -->
+    <script src="js/controllers/FormController.js"></script>
+    
+    <!-- Load main app -->
+    <script src="js/RegistrationApp.js"></script>
+</body>
+</html>

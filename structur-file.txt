@@ -1,0 +1,67 @@
+# YOUTUBE PLAYER CONTROL
+- config/
+  - database.js
+  - email.js
+  - midtrans.js
+- controller.js/
+  - authController.js
+  - paymentController.js
+  - subscriptionController.js
+  - userController.js
+- icons/
+  - icon-192x192.png
+  - icon-512x512.png
+  - player-192x192.png
+- middlewares/
+  - auth.js
+  - validation.js
+- models/
+  - Device.js
+  - Package.js
+  - Payment.js
+  - Subscription.js
+  - User.js
+- node_modules/
+- public/
+  - assets/
+  - cash.png
+  - mitrans.png
+  - desktop/
+    - css/
+      - registration.css
+      - styles.css
+    - icons
+      - icon-192x192.png
+      - icon-512x512.png
+      - player-192x192.png
+    - js
+      - controllers/
+        - FormController.js
+      - services/
+        - APIService.js
+        - FormController.js
+        - FormValidation.js
+        - UIManager.js
+      - registration.js
+      - RegistrationApp.js
+    - index.html
+    - logo.png
+    - manifest.json
+    - registration.html
+  - logo.png
+  - player.html
+- routes/
+  - authRoutes.js
+  - paymentRoutes.js
+  - subscriptionRoutes.js
+  - userRoutes.js
+- utils/
+  - emailSender.js
+  - otpGenerator.js
+- favicon.ico
+- manifest.json
+- package-lock.json
+- package.json
+- server.js
+- structur-file.txt
+- youtube-player.db

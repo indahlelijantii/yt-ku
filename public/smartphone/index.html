@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Search</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <i class="fab fa-youtube youtube-icon"></i>
+            <span class="app-title">XtremeSoft V4</span>
+        </div>
+        <div class="connection-icon" id="connectionIconContainer">
+            <i class="fas fa-wifi" id="connectionIcon"></i>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="search-container" id="searchContainer">
+            <input type="text" id="searchInput" placeholder="Cari video YouTube...">
+            <button onclick="searchVideos()">Cari</button>
+        </div>
+
+        <div class="tab-content active" id="search-tab">
+            <div class="videos-grid" id="videosContainer">
+                <!-- Videos will be inserted here -->
+            </div>
+        </div>
+
+        <div class="tab-content" id="playlist-tab">
+            <div class="section-header">
+                <div class="section-title">Daftar Putar</div>
+            </div>
+            <div class="playlist-container" id="playlistContainer">
+                <!-- Playlist items will be inserted here -->
+                <p class="empty-playlist">Tidak ada video dalam daftar putar</p>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="history-tab">
+            <div class="section-header">
+                <div class="section-title">Riwayat Tontonan</div>
+                <div class="section-actions">
+                    <button id="clearHistoryBtn"><i class="fas fa-trash"></i> Hapus Semua</button>
+                </div>
+            </div>
+            <div class="playlist-container" id="historyContainer">
+                <!-- History items will be inserted here -->
+                <p class="empty-playlist">Belum ada riwayat tontonan</p>
+            </div>
+        </div>
+        
+        <div class="tab-content" id="favorites-tab">
+            <div class="section-header">
+                <div class="section-title">Video Favorit</div>
+            </div>
+            <div class="playlist-container" id="favoritesContainer">
+                <!-- Favorites items will be inserted here -->
+                <p class="empty-playlist">Belum ada video favorit</p>
+            </div>
+        </div>
+
+        <div class="tab-content" id="player-tab">
+            <div class="player-controls">
+                <div class="player-control-frame">
+                    <div class="now-playing">
+                        <img id="currentThumbnail" src="../player.html" alt="Thumbnail video saat ini">
+                        <div class="video-details">
+                            <h3 id="currentTitle">Tidak ada video yang diputar</h3>
+                            <p id="currentAuthor"></p>
+                        </div>
+                    </div>
+                    <input type="range" id="timelineSlider" min="0" max="100" value="0">
+                    
+                    <div class="timeline-container">                 
+                        <span id="currentTime">0:00</span>
+                        <span id="duration">0:00</span>
+                    </div>
+    
+                    <div class="volume-container">
+                        <i class="fas fa-volume-up"></i>
+                        <input type="range" id="volumeSlider" min="0" max="100" value="100">
+                    </div>
+                </div>
+                
+
+                <div class="control-buttons">
+                    <button id="prevButton"><i class="fas fa-step-backward"></i></button>
+                    <button id="playPauseButton"><i class="fas fa-play"></i></button>
+                    <button id="nextButton"><i class="fas fa-step-forward"></i></button>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="footer-tabs">
+        <div class="tab-btn active" data-tab="search">
+            <i class="fas fa-home"></i>
+            <span>Beranda</span>
+        </div>
+        <div class="tab-btn" data-tab="playlist">
+            <i class="fas fa-list"></i>
+            <span>Playlist</span>
+        </div>
+        <div class="tab-btn" data-tab="history">
+            <i class="fas fa-history"></i>
+            <span>Riwayat</span>
+        </div>
+        <div class="tab-btn" data-tab="favorites">
+            <i class="fas fa-star"></i>
+            <span>Favorit</span>
+        </div>
+        <div class="tab-btn" data-tab="player">
+            <i class="fas fa-sliders-h"></i>
+            <span>Kontrol</span>
+        </div>
+    </div>
+
+    <div class="playlist-menu" id="playlistMenu">
+        <div class="menu-item move-top">
+            <i class="fas fa-angle-double-up"></i>
+            <span>Pindah ke Atas</span>
+        </div>
+        <div class="menu-item move-up">
+            <i class="fas fa-angle-up"></i>
+            <span>Naik</span>
+        </div>
+        <div class="menu-item move-down">
+            <i class="fas fa-angle-down"></i>
+            <span>Turun</span>
+        </div>
+        <div class="menu-item remove-item">
+            <i class="fas fa-trash"></i>
+            <span>Hapus</span>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

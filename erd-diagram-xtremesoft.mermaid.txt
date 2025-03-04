@@ -1,0 +1,137 @@
+erDiagram
+    USERS ||--o{ SUBSCRIPTIONS : has
+    USERS ||--o{ DEVICES : owns
+    USERS ||--o{ PLAYLISTS : owns
+    USERS ||--o{ WATCH_HISTORY : has
+    USERS ||--o{ FAVORITES : has
+    USERS ||--o{ NOTIFICATIONS : receives
+    SUBSCRIPTIONS }o--|| PACKAGES : uses
+    SUBSCRIPTIONS ||--o{ PAYMENTS : has
+    PLAYLISTS ||--o{ PLAYLIST_ITEMS : contains
+    VIDEOS ||--o{ PLAYLIST_ITEMS : included_in
+    VIDEOS ||--o{ WATCH_HISTORY : watched_in
+    VIDEOS ||--o{ FAVORITES : marked_as
+
+    USERS {
+        int user_id PK
+        string email UK
+        string password
+        date registration_date
+        string status
+        datetime last_login_date
+        string otp_code
+        datetime otp_expiry
+        datetime created_at
+        datetime updated_at
+    }
+
+    SUBSCRIPTIONS {
+        int subscription_id PK
+        int user_id FK
+        int package_id FK
+        date start_date
+        date end_date
+        string payment_status
+        string subscription_status
+        datetime created_at
+        datetime updated_at
+    }
+
+    DEVICES {
+        int device_id PK
+        int user_id FK
+        string device_uuid
+        string device_name
+        string device_type
+        boolean is_active
+        datetime last_active
+        string login_token
+        datetime created_at
+        datetime updated_at
+    }
+
+    PACKAGES {
+        int package_id PK
+        string name
+        int duration_months
+        decimal price
+        string description
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }
+
+    PAYMENTS {
+        int payment_id PK
+        int subscription_id FK
+        decimal amount
+        string payment_method
+        string transaction_id
+        datetime payment_date
+        string status
+        string proof_of_payment
+        datetime created_at
+        datetime updated_at
+    }
+
+    NOTIFICATIONS {
+        int notification_id PK
+        int user_id FK
+        string type
+        string message
+        boolean is_read
+        datetime created_at
+    }
+
+    PLAYLISTS {
+        int playlist_id PK
+        int user_id FK
+        string name
+        string description
+        datetime created_at
+        datetime updated_at
+    }
+
+    PLAYLIST_ITEMS {
+        int playlist_item_id PK
+        int playlist_id FK
+        int video_id FK
+        int position
+        datetime date_added
+        datetime created_at
+        datetime updated_at
+    }
+
+    WATCH_HISTORY {
+        int history_id PK
+        int user_id FK
+        int video_id FK
+        datetime watch_date
+        int progress
+        boolean complete
+        datetime created_at
+        datetime updated_at
+    }
+
+    FAVORITES {
+        int favorite_id PK
+        int user_id FK
+        int video_id FK
+        datetime date_added
+        datetime created_at
+        datetime updated_at
+    }
+
+    VIDEOS {
+        int video_id PK
+        string title
+        string author
+        string thumbnail_url
+        string video_url
+        int duration
+        string description
+        string category
+        boolean is_active
+        datetime created_at
+        datetime updated_at
+    }

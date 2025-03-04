@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="id" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XtremeSoft V4.01</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Preload untuk file-file penting -->
+    <link rel="preload" href="script.js" as="script">
+    <link rel="preload" href="/player" as="fetch">
+    <!-- <link rel="prefetch" href="/player"> -->
+    <!-- Manifest untuk PWA -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ff0000">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+</head>
+<body>
+    <!-- Main Player (memenuhi seluruh layar) -->
+    <div class="player-container">
+        <div id="player"></div>
+        <div id="noVideoOverlay">
+            <div class="overlay-icon"><i class="fas fa-video-slash"></i></div>
+            <div class="overlay-text">Tidak Ada Video Yang Diputar</div>
+            <div class="overlay-subtext">Gunakan smartphone Anda untuk mengontrol pemutaran</div>
+        </div>
+        <div id="mouseOverlay" class="mouse-overlay"></div>
+    </div>
+
+    <!-- Floating Logo -->
+    <div class="floating-header">
+        <div class="logo">
+            <i class="fas fa-play-circle logo-icon"></i>
+            <span class="logo-text">XtremeSoft V4.01</span>
+        </div>
+    </div>
+    
+    <!-- Floating Controls dengan Status Koneksi -->
+    <div class="floating-controls">
+        <!-- Status koneksi sebagai indikator bulat -->
+        <span class="connection-status disconnected" id="connectionStatus" title="Status Koneksi"></span>
+        
+        <!-- Tombol clear cache -->
+        <button id="clear-cache-btn" class="control-btn" title="Hapus Cache">
+            <i class="fas fa-broom"></i>
+        </button>
+
+        <button id="qr-menu" class="control-btn" title="Menu QR Code">
+            <i class="fas fa-qrcode"></i>
+        </button>
+
+        <button id="setting-menu" class="control-btn" title="Menu Setting">
+            <i class="fas fa-cog"></i>
+        </button>
+
+        <button id="toggleSidebar" class="control-btn" title="Tampilkan/Sembunyikan Panel">
+            <i class="fas fa-bars"></i>
+        </button>
+    </div>
+    
+    <!-- Sidebar (Panel Mengambang) -->
+    <div class="sidebar collapsed" id="sidebar">
+        <div class="sidebar-tabs">
+            <div class="sidebar-tab active" data-tab="playlist">Playlist</div>
+            <div class="sidebar-tab" data-tab="history">Riwayat</div>
+            <div class="sidebar-tab" data-tab="favorites">Favorit</div>
+        </div>
+        
+        <!-- Playlist Tab -->
+        <div class="sidebar-content active" data-content="playlist">
+            <div class="playlist-header">
+                <div class="playlist-title">Playlist Saat Ini</div>
+                <div class="playlist-toggle" id="togglePlaylist"><i class="fas fa-chevron-up"></i></div>
+            </div>
+            <div id="playlistItems" class="playlist-items">
+                <div class="empty-playlist">Tidak ada video dalam playlist</div>
+            </div>
+        </div>
+        
+        <!-- History Tab -->
+        <div class="sidebar-content" data-content="history">
+            <div class="playlist-header">
+                <div class="playlist-title">Riwayat Tontonan</div>
+                <button id="clearHistory" title="Hapus Riwayat" class="playlist-toggle-history">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+            <div id="historyItems" class="playlist-items">
+                <div class="empty-playlist">Tidak ada riwayat tontonan</div>
+            </div>
+        </div>
+        
+        <!-- Favorites Tab -->
+        <div class="sidebar-content" data-content="favorites">
+            <div class="playlist-header">
+                <div class="playlist-title">Video Favorit</div>
+            </div>
+            <div id="favoritesItems" class="playlist-items">
+                <div class="empty-playlist">Tidak ada video favorit</div>
+            </div>
+        </div>
+    </div>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="js/script.js"></script>
+    <script src="js/sw-register.js"></script>
+    <script>
+        document.getElementById("mouseOverlay").addEventListener("click", async () => {
+            const element = document.documentElement; 
+            if (!document.fullscreenElement) {
+                try {
+                    await element.requestFullscreen();   
+                } catch (error) {
+                    console.error("Gagal masuk fullscreen:", error);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

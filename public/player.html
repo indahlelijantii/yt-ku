@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="id" translate="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Player</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        body {
+            background-color: #121212;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .header {
+            padding: 15px;
+            background-color: #202020;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .player-title {
+            font-size: 1.2rem;
+        }
+        
+        .status {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .status.connected {
+            color: #4CAF50;
+        }
+        
+        .status.disconnected {
+            color: #f44336;
+        }
+        
+        .player-container {
+            flex: 1;
+            display: flex;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .main-player {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            height: 100%;
+        }
+        
+        #player {
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+        }
+        
+        .sidebar {
+            width: 300px;
+            background-color: #202020;
+            border-left: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+        
+        .sidebar.collapsed {
+            width: 0;
+            overflow: hidden;
+            border-left: none;
+        }
+        
+        .sidebar-toggle {
+            position: absolute;
+            left: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 40px;
+            background-color: #202020;
+            border-radius: 4px 0 0 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #aaa;
+            cursor: pointer;
+            z-index: 5;
+        }
+        
+        .sidebar-toggle:hover {
+            color: #fff;
+        }
+        
+        .sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            flex-shrink: 0;
+        }
+        
+        .sidebar-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .sidebar-tab.active {
+            border-bottom: 3px solid #ff0000;
+            font-weight: bold;
+        }
+        
+        .sidebar-content {
+            display: none;
+            flex: 1;
+            overflow: hidden;
+            flex-direction: column;
+        }
+        
+        .sidebar-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .playlist-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            flex-shrink: 0;
+        }
+        
+        .playlist-title {
+            font-size: 1.1rem;
+        }
+        
+        .playlist-toggle {
+            cursor: pointer;
+            font-size: 1.1rem;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .playlist-toggle:hover {
+            background-color: #3d3d3d;
+        }
+        
+        .playlist-items {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .playlist-items.collapsed {
+            max-height: 0;
+            overflow: hidden;
+        }
+        
+        .playlist-item {
+            display: flex;
+            padding: 10px;
+            border-bottom: 1px solid #333;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            position: relative;
+        }
+        
+        .playlist-item:hover {
+            background-color: #2d2d2d;
+        }
+        
+        .playlist-item.active {
+            background-color: #3d3d3d;
+        }
+        
+        .playlist-item img {
+            width: 120px;
+            height: 68px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+        
+        .playlist-info {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .playlist-info h3 {
+            font-size: 0.9rem;
+            margin-bottom: 5px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .playlist-info p {
+            font-size: 0.8rem;
+            color: #aaa;
+        }
+        
+        .playlist-actions {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            display: flex;
+        }
+        
+        .favorite-btn {
+            background: none;
+            border: none;
+            color: #aaa;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 5px;
+        }
+        
+        .favorite-btn.active {
+            color: #ffcc00;
+        }
+        
+        .empty-playlist {
+            padding: 20px;
+            text-align: center;
+            color: #aaa;
+        }
+        
+        .player-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+            color: #fff;
+        }
+        
+        .overlay-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .overlay-text {
+            font-size: 24px;
+            text-align: center;
+            max-width: 80%;
+            margin-bottom: 10px;
+        }
+        
+        .overlay-subtext {
+            font-size: 16px;
+            color: #aaa;
+            text-align: center;
+            max-width: 80%;
+        }
+        
+        .watched-date {
+            font-size: 0.7rem;
+            color: #777;
+            margin-top: 3px;
+        }
+        
+        .error-indicator {
+            color: #f44336;
+            margin-left: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="player-title">YouTube Remote Player</div>
+        <div id="connectionStatus" class="status">Menghubungkan...</div>
+    </div>
+    
+    <div class="player-container">
+        <div class="main-player">
+            <div id="player"></div>
+            <div id="noVideoOverlay" class="player-overlay">
+                <div class="overlay-icon"><i class="fas fa-video-slash"></i></div>
+                <div class="overlay-text">Tidak Ada Video Yang Diputar</div>
+                <div class="overlay-subtext">Gunakan smartphone Anda untuk mengontrol pemutaran</div>
+            </div>
+        </div>
+        
+        <div class="sidebar">
+            <div class="sidebar-tabs">
+                <div class="sidebar-tab active" data-tab="playlist">Playlist</div>
+                <div class="sidebar-tab" data-tab="history">Riwayat</div>
+                <div class="sidebar-tab" data-tab="favorites">Favorit</div>
+            </div>
+            
+            <!-- Playlist Tab -->
+            <div class="sidebar-content active" data-content="playlist">
+                <div class="playlist-header">
+                    <div class="playlist-title">Playlist Saat Ini</div>
+                    <div class="playlist-toggle" id="togglePlaylist"><i class="fas fa-chevron-up"></i></div>
+                </div>
+                <div id="playlistItems" class="playlist-items">
+                    <div class="empty-playlist">Tidak ada video dalam playlist</div>
+                </div>
+            </div>
+            
+            <!-- History Tab -->
+            <div class="sidebar-content" data-content="history">
+                <div class="playlist-header">
+                    <div class="playlist-title">Riwayat Tontonan</div>
+                    <button id="clearHistory" title="Hapus Riwayat"><i class="fas fa-trash"></i></button>
+                </div>
+                <div id="historyItems" class="playlist-items">
+                    <div class="empty-playlist">Tidak ada riwayat tontonan</div>
+                </div>
+            </div>
+            
+            <!-- Favorites Tab -->
+            <div class="sidebar-content" data-content="favorites">
+                <div class="playlist-header">
+                    <div class="playlist-title">Video Favorit</div>
+                </div>
+                <div id="favoritesItems" class="playlist-items">
+                    <div class="empty-playlist">Tidak ada video favorit</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="sw-register.js"></script>
+    <script>
+        let socket;
+        let player;
+        let playerReady = false;
+        let playlist = [];
+        let historyList = [];
+        let favoritesList = [];
+        let currentVideoId = null;
+        let isPlaylistCollapsed = false;
+        let isSidebarCollapsed = false;
+        let playerState = {
+            playing: false,
+            currentTime: 0,
+            duration: 0,
+            volume: 100,
+            videoId: null
+        };
+        let progressInterval = null;
+        
+        // Initialize YouTube API
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'rel': 0,
+                    'showinfo': 0,
+                    'modestbranding': 1,
+                    'fs': 1
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
+        }
+        
+        // Handle YouTube player errors
+        function onPlayerError(event) {
+            console.error('YouTube Player Error:', event.data);
+            
+            // Error codes:
+            // 2 - Invalid video ID
+            // 5 - Video can't be played in HTML5 player
+            // 100 - Video not found
+            // 101, 150 - Video embedding not allowed
+            
+            const errorMessages = {
+                2: 'ID video tidak valid',
+                5: 'Video tidak dapat diputar di player',
+                100: 'Video tidak ditemukan',
+                101: 'Video tidak diizinkan untuk diputar Oleh Pengguna 1',
+                150: 'Video tidak diizinkan untuk diputar Oleh Yang Upload'
+            };
+            
+            // Show error to user
+            document.getElementById('noVideoOverlay').style.display = 'block';
+            document.getElementById('noVideoOverlay').querySelector('.overlay-text').textContent = 
+                'Error: ' + (errorMessages[event.data] || 'Tidak dapat memutar video');
+            
+            // Notify server about error
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'playerError',
+                    errorCode: event.data,
+                    videoId: playerState.videoId
+                }));
+            }
+            
+            // Try to play next video after a few seconds
+            setTimeout(() => {
+                socket.send(JSON.stringify({ type: 'playNext' }));
+            }, 3000);
+        }
+        
+        function onPlayerReady(event) {
+            playerReady = true;
+            player.setVolume(playerState.volume);
+            
+            // Start progress tracking interval
+            progressInterval = setInterval(updateProgress, 1000);
+        }
+        
+        function onPlayerStateChange(event) {
+            // 1 = playing, 2 = paused, 0 = ended
+            if (event.data === YT.PlayerState.PLAYING) {
+                playerState.playing = true;
+                updatePlayerStateOnServer();
+                
+                // Update overlay visibility
+                document.getElementById('noVideoOverlay').style.display = 'none';
+            } 
+            else if (event.data === YT.PlayerState.PAUSED) {
+                playerState.playing = false;
+                updatePlayerStateOnServer();
+            }
+            else if (event.data === YT.PlayerState.ENDED) {
+                playerState.playing = false;
+                
+                // Move current video to history
+                if (currentVideoId) {
+                    moveToHistory(currentVideoId);
+                }
+                
+                // Play next video in playlist
+                socket.send(JSON.stringify({ type: 'playNext' }));
+            }
+        }
+        
+        function moveToHistory(videoId) {
+            // Find the video in the playlist
+            const videoIndex = playlist.findIndex(video => video.videoId === videoId);
+            
+            if (videoIndex !== -1) {
+                const video = playlist[videoIndex];
+                
+                // Add to history if not already there
+                if (!historyList.some(item => item.videoId === videoId)) {
+                    historyList.unshift({...video, timestamp: Date.now()});
+                    
+                    // Limit history to 50 items
+                    if (historyList.length > 50) {
+                        historyList.pop();
+                    }
+                    
+                    // Update history UI
+                    updateHistoryUI();
+                    
+                    // Save history to server
+                    socket.send(JSON.stringify({
+                        type: 'updateHistory',
+                        history: historyList
+                    }));
+                }
+                
+                // Remove from playlist if it's not the last item
+                if (playlist.length > 1) {
+                    socket.send(JSON.stringify({
+                        type: 'removeFromPlaylist',
+                        index: videoIndex
+                    }));
+                }
+            }
+        }
+        
+        function updateProgress() {
+            if (playerReady && player && player.getCurrentTime) {
+                try {
+                    playerState.currentTime = player.getCurrentTime() || 0;
+                    playerState.duration = player.getDuration() || 0;
+                    
+                    // Only send updates every 3 seconds to reduce traffic
+                    if (Math.round(playerState.currentTime) % 3 === 0) {
+                        socket.send(JSON.stringify({
+                            type: 'progress',
+                            currentTime: playerState.currentTime,
+                            duration: playerState.duration
+                        }));
+                    }
+                } catch (e) {
+                    console.error('Error updating progress:', e);
+                }
+            }
+        }
+        
+        function updatePlayerStateOnServer() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                socket.send(JSON.stringify({
+                    type: 'playerState',
+                    state: playerState
+                }));
+            }
+        }
+        
+        // Toggle playlist collapse
+        function togglePlaylist() {
+            const playlistItems = document.getElementById('playlistItems');
+            const toggleIcon = document.querySelector('#togglePlaylist i');
+            
+            isPlaylistCollapsed = !isPlaylistCollapsed;
+            
+            if (isPlaylistCollapsed) {
+                playlistItems.classList.add('collapsed');
+                toggleIcon.className = 'fas fa-chevron-down';
+            } else {
+                playlistItems.classList.remove('collapsed');
+                toggleIcon.className = 'fas fa-chevron-up';
+            }
+        }
+        
+        // Initialize sidebar
+        function initSidebar() {
+            // Add toggle button for sidebar
+            const sidebar = document.querySelector('.sidebar');
+            
+            // Create toggle button
+            const toggleButton = document.createElement('div');
+            toggleButton.className = 'sidebar-toggle';
+            toggleButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+            sidebar.appendChild(toggleButton);
+            
+            // Toggle button event listener
+            toggleButton.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                isSidebarCollapsed = sidebar.classList.contains('collapsed');
+                
+                // Update toggle button icon
+                if (isSidebarCollapsed) {
+                    toggleButton.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                    toggleButton.style.left = '0';
+                } else {
+                    toggleButton.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                    toggleButton.style.left = '-20px';
+                }
+            });
+            
+            // Add resize listener to adjust playlist height
+            window.addEventListener('resize', adjustPlaylistHeight);
+            
+            // Call once initially
+            adjustPlaylistHeight();
+        }
+        
+        function adjustPlaylistHeight() {
+            const playlistContainers = document.querySelectorAll('.playlist-items');
+            const mainPlayer = document.querySelector('.main-player');
+            const playerHeight = mainPlayer.offsetHeight;
+            
+            playlistContainers.forEach(container => {
+                const headerHeight = container.previousElementSibling ? 
+                                   container.previousElementSibling.offsetHeight : 50;
+                container.style.maxHeight = `${playerHeight - headerHeight}px`;
+            });
+        }
+        
+        // Initialize sidebar tabs
+        function initSidebarTabs() {
+            const tabs = document.querySelectorAll('.sidebar-tab');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Deactivate all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Activate clicked tab
+                    tab.classList.add('active');
+                    
+                    // Hide all content
+                    document.querySelectorAll('.sidebar-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    
+                    // Show related content
+                    const tabName = tab.getAttribute('data-tab');
+                    document.querySelector(`.sidebar-content[data-content="${tabName}"]`).classList.add('active');
+                });
+            });
+        }
+        
+        // Toggle favorite status
+        function toggleFavorite(videoId) {
+            const videoIndex = favoritesList.findIndex(video => video.videoId === videoId);
+            
+            if (videoIndex === -1) {
+                // Add to favorites
+                const video = playlist.find(v => v.videoId === videoId) || 
+                              historyList.find(v => v.videoId === videoId);
+                              
+                if (video) {
+                    favoritesList.push({...video});
+                    
+                    // Save favorites to server
+                    socket.send(JSON.stringify({
+                        type: 'updateFavorites',
+                        favorites: favoritesList
+                    }));
+                    
+                    // Update UI
+                    updateFavoritesUI();
+                    updatePlaylistUI();
+                    updateHistoryUI();
+                }
+            } else {
+                // Remove from favorites
+                favoritesList.splice(videoIndex, 1);
+                
+                // Save favorites to server
+                socket.send(JSON.stringify({
+                    type: 'updateFavorites',
+                    favorites: favoritesList
+                }));
+                
+                // Update UI
+                updateFavoritesUI();
+                updatePlaylistUI();
+                updateHistoryUI();
+            }
+        }
+        
+        // Check if video is in favorites
+        function isVideoFavorite(videoId) {
+            return favoritesList.some(video => video.videoId === videoId);
+        }
+        
+        // Connect to WebSocket server
+        function connectWebSocket() {
+            const protocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${location.host}`;
+            
+            socket = new WebSocket(wsUrl);
+            
+            socket.onopen = function() {
+                console.log('Connected to server');
+                document.getElementById('connectionStatus').textContent = 'Terhubung';
+                document.getElementById('connectionStatus').classList.add('connected');
+                document.getElementById('connectionStatus').classList.remove('disconnected');
+                
+                // Register as a player
+                socket.send(JSON.stringify({
+                    type: 'register',
+                    clientType: 'player'
+                }));
+            };
+            
+            socket.onclose = function() {
+                console.log('Disconnected from server');
+                document.getElementById('connectionStatus').textContent = 'Terputus';
+                document.getElementById('connectionStatus').classList.remove('connected');
+                document.getElementById('connectionStatus').classList.add('disconnected');
+                
+                // Try to reconnect after 5 seconds
+                setTimeout(connectWebSocket, 5000);
+            };
+            
+            socket.onerror = function(error) {
+                console.error('WebSocket error:', error);
+            };
+            
+            socket.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                console.log('Received message:', data);
+                
+                if (data.type === 'play') {
+                    if (data.videoId) {
+                        if (currentVideoId !== data.videoId) {
+                            currentVideoId = data.videoId;
+                            player.loadVideoById(data.videoId);
+                        } else {
+                            player.playVideo();
+                        }
+                        playerState.videoId = data.videoId;
+                        playerState.playing = true;
+                        document.getElementById('noVideoOverlay').style.display = 'none';
+                    }
+                }
+                else if (data.type === 'pause') {
+                    player.pauseVideo();
+                    playerState.playing = false;
+                }
+                else if (data.type === 'volume') {
+                    player.setVolume(data.value);
+                    playerState.volume = data.value;
+                }
+                else if (data.type === 'seek') {
+                    player.seekTo(data.time, true);
+                    playerState.currentTime = data.time;
+                }
+                else if (data.type === 'playlist') {
+                    playlist = data.playlist;
+                    updatePlaylistUI();
+                }
+                else if (data.type === 'history') {
+                    historyList = data.history;
+                    updateHistoryUI();
+                }
+                else if (data.type === 'favorites') {
+                    favoritesList = data.favorites;
+                    updateFavoritesUI();
+                }
+                else if (data.type === 'playerState') {
+                    playerState = data.state;
+                }
+            };
+        }
+        
+        // Update playlist UI
+        function updatePlaylistUI() {
+            const playlistContainer = document.getElementById('playlistItems');
+            
+            if (playlist.length === 0) {
+                playlistContainer.innerHTML = '<div class="empty-playlist">Tidak ada video dalam playlist</div>';
+                return;
+            }
+            
+            playlistContainer.innerHTML = '';
+            
+            playlist.forEach((video, index) => {
+                const isActive = video.videoId === currentVideoId;
+                const isFavorite = isVideoFavorite(video.videoId);
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = `playlist-item ${isActive ? 'active' : ''}`;
+                itemElement.innerHTML = `
+                    <img src="${video.thumbnail}" alt="${video.title}">
+                    <div class="playlist-info">
+                        <h3>${video.title}</h3>
+                        <p>${video.author}</p>
+                    </div>
+                    <div class="playlist-actions">
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${video.videoId}">
+                            <i class="fas fa-star"></i>
+                        </button>
+                    </div>
+                `;
+                
+                itemElement.querySelector('.playlist-info').addEventListener('click', () => {
+                    socket.send(JSON.stringify({
+                        type: 'playPlaylistItem',
+                        index: index
+                    }));
+                });
+                
+                itemElement.querySelector('.favorite-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(video.videoId);
+                });
+                
+                playlistContainer.appendChild(itemElement);
+            });
+        }
+        
+        // Update history UI
+        function updateHistoryUI() {
+            const historyContainer = document.getElementById('historyItems');
+            
+            if (historyList.length === 0) {
+                historyContainer.innerHTML = '<div class="empty-playlist">Tidak ada riwayat tontonan</div>';
+                return;
+            }
+            
+            historyContainer.innerHTML = '';
+            
+            historyList.forEach((video) => {
+                const isActive = video.videoId === currentVideoId;
+                const isFavorite = isVideoFavorite(video.videoId);
+                const hasError = video.error || false;
+                const dateStr = new Date(video.timestamp).toLocaleString('id-ID');
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = `playlist-item ${isActive ? 'active' : ''}`;
+                itemElement.innerHTML = `
+                    <img src="${video.thumbnail}" alt="${video.title}">
+                    <div class="playlist-info">
+                        <h3>${video.title} ${hasError ? '<i class="fas fa-exclamation-triangle error-indicator"></i>' : ''}</h3>
+                        <p>${video.author}</p>
+                        <p class="watched-date">Ditonton: ${dateStr}</p>
+                    </div>
+                    <div class="playlist-actions">
+                        <button class="favorite-btn ${isFavorite ? 'active' : ''}" data-id="${video.videoId}">
+                            <i class="fas fa-star"></i>
+                        </button>
+                    </div>
+                `;
+                
+                itemElement.querySelector('.playlist-info').addEventListener('click', () => {
+                    // Add to playlist and play
+                    socket.send(JSON.stringify({
+                        type: 'addToPlaylist',
+                        video: video
+                    }));
+                    
+                    // Wait a bit for the server to process
+                    setTimeout(() => {
+                        socket.send(JSON.stringify({
+                            type: 'play',
+                            videoId: video.videoId
+                        }));
+                    }, 100);
+                });
+                
+                itemElement.querySelector('.favorite-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(video.videoId);
+                });
+                
+                historyContainer.appendChild(itemElement);
+            });
+        }
+        
+        // Update favorites UI
+        function updateFavoritesUI() {
+            const favoritesContainer = document.getElementById('favoritesItems');
+            
+            if (favoritesList.length === 0) {
+                favoritesContainer.innerHTML = '<div class="empty-playlist">Tidak ada video favorit</div>';
+                return;
+            }
+            
+            favoritesContainer.innerHTML = '';
+            
+            favoritesList.forEach((video) => {
+                const isActive = video.videoId === currentVideoId;
+                
+                const itemElement = document.createElement('div');
+                itemElement.className = `playlist-item ${isActive ? 'active' : ''}`;
+                itemElement.innerHTML = `
+                    <img src="${video.thumbnail}" alt="${video.title}">
+                    <div class="playlist-info">
+                        <h3>${video.title}</h3>
+                        <p>${video.author}</p>
+                    </div>
+                    <div class="playlist-actions">
+                        <button class="favorite-btn active" data-id="${video.videoId}">
+                            <i class="fas fa-star"></i>
+                        </button>
+                    </div>
+                `;
+                
+                itemElement.querySelector('.playlist-info').addEventListener('click', () => {
+                    // Add to playlist and play
+                    socket.send(JSON.stringify({
+                        type: 'addToPlaylist',
+                        video: video
+                    }));
+                    
+                    // Wait a bit for the server to process
+                    setTimeout(() => {
+                        socket.send(JSON.stringify({
+                            type: 'play',
+                            videoId: video.videoId
+                        }));
+                    }, 100);
+                });
+                
+                itemElement.querySelector('.favorite-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleFavorite(video.videoId);
+                });
+                
+                favoritesContainer.appendChild(itemElement);
+            });
+        }
+        
+        // Clear watch history
+        function clearHistory() {
+            if (confirm('Apakah Anda yakin ingin menghapus semua riwayat tontonan?')) {
+                historyList = [];
+                updateHistoryUI();
+                
+                socket.send(JSON.stringify({
+                    type: 'updateHistory',
+                    history: []
+                }));
+            }
+        }
+        
+        // Initialize everything when page loads
+        window.addEventListener('DOMContentLoaded', () => {
+            connectWebSocket();
+            initSidebarTabs();
+            initSidebar();
+            
+            // Set up event listeners
+            document.getElementById('togglePlaylist').addEventListener('click', togglePlaylist);
+            document.getElementById('clearHistory').addEventListener('click', clearHistory);
+        });
+
+        // Daftarkan service worker
+        if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js')
+            .then((registration) => {
+                console.log('Service Worker berhasil didaftarkan dengan scope:', registration.scope);
+            })
+            .catch((error) => {
+                console.error('Service Worker gagal didaftarkan:', error);
+            });
+        });
+        }
+       
+    </script>
+</body>
+</html>

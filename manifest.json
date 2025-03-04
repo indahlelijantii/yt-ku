@@ -1,0 +1,40 @@
+{
+    "name": "XtremeSoft YouTube Player",
+    "short_name": "XtremeSoft",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#ff0000",
+    "description": "Aplikasi YouTube Player untuk menonton video dari XtremeSoft",
+    "orientation": "any",
+    "icons": [
+      {
+        "src": "/icons/icon-192x192.png",
+        "sizes": "192x192",
+        "type": "image/png",
+        "purpose": "any maskable"
+      },
+      {
+        "src": "/icons/icon-512x512.png",
+        "sizes": "512x512",
+        "type": "image/png",
+        "purpose": "any maskable"
+      }
+    ],
+    "shortcuts": [
+      {
+        "name": "Player",
+        "short_name": "Player",
+        "description": "Buka Halaman Player YouTube",
+        "url": "/player",
+        "icons": [
+          {
+            "src": "/icons/player-192x192.png",
+            "sizes": "192x192"
+          }
+        ]
+      }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false
+  }
